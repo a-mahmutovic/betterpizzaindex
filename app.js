@@ -4,18 +4,23 @@ const radius=1500;
 let pizzaCount=0;
 let barCount=0;
 
-fetchData();
+boot();
 
-async function fetchData(){
- let pizza=await queryOverpass(`["amenity"="restaurant"]["cuisine"~"pizza"]`);
- let bars=await queryOverpass(`["amenity"="bar"]["lgbtq"~"yes|primary"]`);
- pizzaCount=pizza.length;
- barCount=bars.length;
+async function boot(){
+ await sleep(800);
+ await fetchData();
  renderCharts();
  calcDefcon();
 }
 
-async function queryOverpass(filter){
+async function fetchData(){
+ let pizza=await query(`["amenity"="restaurant"]["cuisine"~"pizza"]`);
+ let bars=await query(`["amenity"="bar"]["lgbtq"~"yes|primary"]`);
+ pizzaCount=pizza.length;
+ barCount=bars.length;
+}
+
+async function query(filter){
  let q=`[out:json];node${filter}(around:${radius},${centerLat},${centerLng});out;`;
  let r=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:q});
  let d=await r.json();
@@ -23,27 +28,30 @@ async function queryOverpass(filter){
 }
 
 function calcDefcon(){
- let hour=new Date().getHours();
- let night=(hour>=20||hour<=3)?1.5:1;
- let score=(pizzaCount*night)/(barCount||1);
- let level=5;
- if(score>6)level=1;
- else if(score>4)level=2;
- else if(score>2)level=3;
- else if(score>1)level=4;
- document.getElementById("defcon").textContent="DEFCON "+level;
+ let h=new Date().getHours();
+ let night=(h>=20||h<=3)?1.7:1;
+ let ratio=(pizzaCount*night)/(barCount||1);
+ let lvl=5;
+ if(ratio>6)lvl=1;
+ else if(ratio>4)lvl=2;
+ else if(ratio>2)lvl=3;
+ else if(ratio>1)lvl=4;
+ let el=document.getElementById("defcon");
+ el.textContent="DEFCON "+lvl;
+ el.setAttribute("data-text","DEFCON "+lvl);
 }
 
 function renderCharts(){
- new Chart(document.getElementById("pizzaChart"),{
-  type:"bar",
-  data:{labels:["Pizza Places"],datasets:[{data:[pizzaCount]}]},
-  options:{plugins:{legend:{display:false}}}
+ new Chart(pizzaChart,{
+  type:"line",
+  data:{labels:["NOW"],datasets:[{data:[pizzaCount],borderWidth:2}]},
+  options:{scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}},animation:{duration:1500}}
  });
-
- new Chart(document.getElementById("barChart"),{
-  type:"bar",
-  data:{labels:["Gay Bars"],datasets:[{data:[barCount]}]},
-  options:{plugins:{legend:{display:false}}}
+ new Chart(barChart,{
+  type:"line",
+  data:{labels:["NOW"],datasets:[{data:[barCount],borderWidth:2}]},
+  options:{scales:{x:{display:false},y:{display:false}},plugins:{legend:{display:false}},animation:{duration:1500}}
  });
 }
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
