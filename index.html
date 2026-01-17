@@ -2,27 +2,132 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Pizza Index DEFCON</title>
+<title>Pentagon Pizza Index</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body{font-family:sans-serif;background:#111;color:#eee;text-align:center}
-h1{font-size:2.5rem}
-#defcon{font-size:4rem;margin:1rem}
-.chart{width:90%;max-width:600px;margin:2rem auto}
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#05070a;
+ color:#00ff9c;
+ font-family:'Share Tech Mono',monospace;
+ overflow:hidden;
+}
+.scanlines{
+ position:fixed;
+ inset:0;
+ pointer-events:none;
+ background:repeating-linear-gradient(
+  to bottom,
+  rgba(255,255,255,0.03),
+  rgba(255,255,255,0.03) 1px,
+  transparent 1px,
+  transparent 3px
+ );
+ animation:scan 6s linear infinite;
+}
+@keyframes scan{from{background-position:0 0}to{background-position:0 100%}}
+.container{
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ height:100vh;
+ gap:1.5rem;
+}
+.title{
+ font-size:1.2rem;
+ letter-spacing:4px;
+ opacity:.7;
+}
+.defcon{
+ font-size:5rem;
+ text-shadow:0 0 15px #00ff9c;
+ animation:pulse 2s infinite;
+}
+@keyframes pulse{
+ 0%,100%{transform:scale(1)}
+ 50%{transform:scale(1.05)}
+}
+.sub{
+ font-size:.9rem;
+ opacity:.6;
+}
+.panels{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:1rem;
+ width:90%;
+ max-width:900px;
+}
+.panel{
+ border:1px solid #00ff9c44;
+ padding:1rem;
+ background:linear-gradient(180deg,#020304,#060a0f);
+ box-shadow:0 0 20px #00ff9c22 inset;
+}
+.panel h2{
+ margin:0 0 .5rem;
+ font-size:.8rem;
+ opacity:.7;
+}
+.footer{
+ position:absolute;
+ bottom:10px;
+ font-size:.7rem;
+ opacity:.4;
+}
+.glitch{
+ position:relative;
+}
+.glitch::before,.glitch::after{
+ content:attr(data-text);
+ position:absolute;
+ left:0;
+ top:0;
+ opacity:.7;
+}
+.glitch::before{
+ color:#00ffff;
+ transform:translate(2px,-2px);
+ clip-path:polygon(0 0,100% 0,100% 45%,0 45%);
+ animation:glitch 2s infinite;
+}
+.glitch::after{
+ color:#ff0055;
+ transform:translate(-2px,2px);
+ clip-path:polygon(0 55%,100% 55%,100% 100%,0 100%);
+ animation:glitch 1.5s infinite;
+}
+@keyframes glitch{
+ 0%{transform:translate(0,0)}
+ 20%{transform:translate(-2px,2px)}
+ 40%{transform:translate(2px,-2px)}
+ 60%{transform:translate(-1px,1px)}
+ 80%{transform:translate(1px,-1px)}
+ 100%{transform:translate(0,0)}
+}
 </style>
 </head>
 <body>
-<h1>Pentagon Pizza Index</h1>
-<div id="defcon">LOADING</div>
-
-<div class="chart">
+<div class="scanlines"></div>
+<div class="container">
+<div class="title">STRATEGIC FOOD INTELLIGENCE MONITOR</div>
+<div id="defcon" class="defcon glitch" data-text="DEFCON ?">DEFCON ?</div>
+<div class="sub">Pentagon Night Activity Correlation</div>
+<div class="panels">
+<div class="panel">
+<h2>PIZZA ACTIVITY INDEX</h2>
 <canvas id="pizzaChart"></canvas>
 </div>
-
-<div class="chart">
+<div class="panel">
+<h2>GAY BAR ACTIVITY INDEX</h2>
 <canvas id="barChart"></canvas>
 </div>
-
+</div>
+<div class="footer">OPEN-SOURCE INTEL · UNOFFICIAL · EXPERIMENTAL</div>
+</div>
 <script src="app.js"></script>
 </body>
 </html>
